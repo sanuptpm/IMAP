@@ -151,7 +151,7 @@ def moving_and_copying_messages():
     c.select('Today')
     typ, [response] = c.search(None, 'ALL')
     print 'COPIED:', response
-    
+
 # Delete message from mailbox
 def deleting_messages():
     c.select('Today')
@@ -183,6 +183,28 @@ def deleting_messages():
     # What ids are left in the mailbox?
     typ, [msg_ids] = c.search(None, 'ALL')
     print 'Remaining messages:', msg_ids
+# To delete mailbox with name
+def delete_mailbox():
+    c.delete('Archive.Today')
+
+
+def search_with_uid():
+    c.select('Today')
+    result, data = c.uid('search', None, "ALL")
+    print result, data
+    # split and get the last UID
+    latest_email_uid = data[0].split()[-1]
+    print latest_email_uid
+    result, data = c.uid('fetch', latest_email_uid, '(RFC822)')
+    # print result, data
+    raw_email = data[0][1]
+    # print raw_email
+    email_message = email.message_from_string(raw_email)
+ 
+    print "To :", email_message['To']
+    print "From :", email_message['From']
+    print "Subject :", email_message['Subject']
+    print "Date :", email_message['Date']
 
 
 if __name__ == '__main__':
@@ -200,7 +222,10 @@ if __name__ == '__main__':
         # whole_messages()
         # uploading_messages()
         # moving_and_copying_messages()
-        deleting_messages()
+        # deleting_messages()
+        # delete_mailbox()
+        search_with_uid()
+        # c.close()
     
     finally:
         c.logout()
